@@ -1,0 +1,14 @@
+const jwt = require('jsonwebtoken');
+
+module.exports = (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) return res.sendStatus(401); // status - unauthorized
+    const codedToken = authHeader.split(' ')[1];
+    try {
+        const trueToken = jwt.verify(codedToken, process.env.JWT_SECRET);
+        req.user = trueToken;
+        next();
+    } catch (err) {
+        res.sendStatus(403); // status - request denied
+    }
+}
